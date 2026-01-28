@@ -1,0 +1,243 @@
+/**
+ * Pool Info Component Styles
+ */
+
+.container {
+  background: white;
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-4);
+  overflow: hidden;
+}
+
+.container.warning {
+  background: var(--color-warning-bg);
+  border-color: var(--color-warning-border);
+}
+
+/* Header button */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--spacing-3);
+  background: transparent;
+  text-align: left;
+  transition: background var(--transition-fast);
+}
+
+.header:hover {
+  background: var(--color-gray-50);
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.headerIcon {
+  font-size: var(--font-size-base);
+}
+
+.headerTitle {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-dark);
+}
+
+.poolType {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  background: var(--color-gray-100);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+.chevron {
+  font-size: 10px;
+  color: var(--color-gray-400);
+  transition: transform var(--transition-fast);
+}
+
+.chevron.expanded {
+  transform: rotate(180deg);
+}
+
+/* Content */
+.content {
+  padding: 0 var(--spacing-3) var(--spacing-3);
+  border-top: 1px solid var(--color-gray-100);
+  animation: fadeIn var(--transition-normal) ease-out;
+}
+
+/* Prominent type and version display */
+.typeVersionRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-3);
+  margin: var(--spacing-2) 0;
+  background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-gray-200);
+}
+
+.typeVersionLabel {
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: var(--color-gray-600);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.typeVersionValue {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-primary);
+  background: white;
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-2) 0;
+  border-bottom: 1px solid var(--color-gray-100);
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.rowLabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+}
+
+.rowValue {
+  font-size: var(--font-size-xs);
+  color: var(--color-dark);
+  background: var(--color-gray-100);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+}
+
+.remotePools {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  align-items: flex-end;
+}
+
+/* Rate limits section */
+.rateLimits {
+  display: grid;
+  gap: var(--spacing-3);
+  margin-top: var(--spacing-3);
+}
+
+/* Educational note */
+.educationalNote {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-3);
+  padding: var(--spacing-2);
+  background: var(--color-primary-bg);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  color: var(--color-primary);
+}
+
+.noteIcon {
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+/* Warning state */
+.warningContent {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3);
+}
+
+.warningIcon {
+  font-size: var(--font-size-lg);
+  color: var(--color-warning-text);
+}
+
+.warningText {
+  flex: 1;
+}
+
+.warningText strong {
+  display: block;
+  font-size: var(--font-size-sm);
+  color: var(--color-warning-text);
+  margin-bottom: var(--spacing-1);
+}
+
+.warningText p {
+  font-size: var(--font-size-xs);
+  color: var(--color-warning-text);
+  margin: 0;
+  opacity: 0.8;
+}
+
+/* Error state */
+.errorState {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3);
+  color: var(--color-gray-500);
+  font-size: var(--font-size-sm);
+}
+
+.errorIcon {
+  color: var(--color-gray-400);
+}
+
+/* Badges */
+.loadingBadge {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  padding: 2px 8px;
+  background: var(--color-gray-100);
+  border-radius: var(--radius-full);
+}
+
+.supportedBadge {
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: var(--color-success);
+  padding: 2px 8px;
+  background: var(--color-success-bg);
+  border-radius: var(--radius-full);
+}
+
+.unsupportedBadge {
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: var(--color-error);
+  padding: 2px 8px;
+  background: var(--color-error-bg);
+  border-radius: var(--radius-full);
+}

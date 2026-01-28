@@ -1,0 +1,108 @@
+/**
+ * Destination Balance Display Component Styles
+ */
+
+.container {
+  background: var(--color-gray-50);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-3);
+  margin-bottom: var(--spacing-4);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-2);
+}
+
+.label {
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: var(--color-gray-600);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.network {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  background: var(--color-gray-200);
+  padding: 2px 6px;
+  border-radius: var(--radius-full);
+}
+
+.content {
+  margin-bottom: var(--spacing-2);
+}
+
+.balanceRow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-2);
+}
+
+.balanceValue {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-dark);
+}
+
+.symbol {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+.detailRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--font-size-xs);
+}
+
+.detailLabel {
+  color: var(--color-gray-500);
+}
+
+.detailValue {
+  color: var(--color-dark);
+  background: var(--color-gray-200);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+}
+
+.note {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-400);
+  font-style: italic;
+  text-align: center;
+}
+
+/* Compact badge */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: var(--color-gray-600);
+  background: var(--color-gray-100);
+  border-radius: var(--radius-full);
+}
+
+.loadingBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  background: var(--color-gray-100);
+  border-radius: var(--radius-full);
+}

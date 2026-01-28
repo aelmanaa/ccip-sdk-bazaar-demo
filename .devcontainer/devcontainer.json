@@ -1,0 +1,32 @@
+{
+  "name": "CCIP SDK Demo",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:22",
+  "forwardPorts": [5173, 4173],
+  "portsAttributes": {
+    "5173": {
+      "label": "Vite Dev Server",
+      "onAutoForward": "openBrowser"
+    },
+    "4173": {
+      "label": "Vite Preview",
+      "onAutoForward": "notify"
+    }
+  },
+  "postCreateCommand": "npm install",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": "explicit"
+        },
+        "typescript.tsdk": "node_modules/typescript/lib"
+      }
+    }
+  }
+}

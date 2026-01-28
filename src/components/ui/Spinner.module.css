@@ -1,0 +1,110 @@
+/**
+ * Spinner Component Styles
+ */
+
+/* Base spinner */
+.spinner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.svg {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Track (background circle) */
+.track {
+  opacity: 0.2;
+}
+
+/* Arc (spinning part) */
+.arc {
+  opacity: 1;
+}
+
+/* Sizes */
+.sm .svg {
+  width: 16px;
+  height: 16px;
+}
+
+.md .svg {
+  width: 24px;
+  height: 24px;
+}
+
+.lg .svg {
+  width: 40px;
+  height: 40px;
+}
+
+/* Colors */
+.primary {
+  color: var(--color-primary);
+}
+
+.white {
+  color: white;
+}
+
+.gray {
+  color: var(--color-gray-400);
+}
+
+/* Loading text with inline spinner */
+.loadingText {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+}
+
+/* Loading overlay */
+.overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-8);
+  gap: var(--spacing-4);
+}
+
+.overlayText {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  margin: 0;
+  text-align: center;
+}
+
+/* Skeleton loader */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-gray-200) 25%,
+    var(--color-gray-100) 50%,
+    var(--color-gray-200) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-sm);
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

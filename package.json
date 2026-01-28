@@ -1,0 +1,68 @@
+{
+  "name": "ccip-sdk-demo",
+  "version": "1.0.0",
+  "description": "Educational demo showcasing @chainlink/ccip-sdk for cross-chain token transfers",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0 --port 5173",
+    "build": "tsc --noEmit && vite build",
+    "build:only": "vite build",
+    "preview": "vite preview --host 0.0.0.0 --port 4173",
+    "typecheck": "tsc --noEmit",
+    "typecheck:watch": "tsc --noEmit --watch --preserveWatchOutput",
+    "lint": "eslint . --max-warnings 0",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
+    "check": "npm run typecheck && npm run lint && npm run format:check",
+    "clean": "rm -rf dist node_modules/.vite",
+    "clean:full": "rm -rf dist node_modules/.vite node_modules package-lock.json",
+    "lint-staged": "lint-staged",
+    "prepare": "husky || true"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,css,md}": [
+      "prettier --write"
+    ]
+  },
+  "dependencies": {
+    "@chainlink/ccip-sdk": "^0.95.0",
+    "@rainbow-me/rainbowkit": "^2.2.10",
+    "@solana/wallet-adapter-base": "^0.9.23",
+    "@solana/wallet-adapter-react": "^0.15.35",
+    "@solana/wallet-adapter-react-ui": "^0.9.35",
+    "@solana/wallet-adapter-wallets": "^0.19.32",
+    "@solana/web3.js": "^1.98.0",
+    "@tanstack/react-query": "^5.62.0",
+    "buffer": "^6.0.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "viem": "^2.21.0",
+    "wagmi": "^2.14.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^5.1.2",
+    "eslint": "^9.17.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-react-refresh": "^0.4.16",
+    "globals": "^17.2.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.4.2",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.18.1",
+    "vite": "^6.0.5",
+    "vite-plugin-node-polyfills": "^0.25.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

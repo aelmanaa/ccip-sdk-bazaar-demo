@@ -1,0 +1,137 @@
+/**
+ * Rate Limit Display Component Styles
+ */
+
+.container {
+  padding: var(--spacing-3);
+  background: var(--color-gray-50);
+  border-radius: var(--radius-md);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-2);
+}
+
+.label {
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: var(--color-gray-600);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.value {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-dark);
+}
+
+.disabled {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-400);
+  font-style: italic;
+}
+
+/* Progress bar */
+.progressContainer {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-2);
+}
+
+.progressTrack {
+  flex: 1;
+  height: 8px;
+  background: var(--color-gray-200);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progressBar {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width var(--transition-normal);
+}
+
+.percentage {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  min-width: 36px;
+  text-align: right;
+}
+
+/* Color classes with gradient fills */
+.green {
+  background: linear-gradient(90deg, var(--color-success), var(--color-success-light));
+  color: var(--color-success);
+}
+
+.yellow {
+  background: linear-gradient(90deg, var(--color-warning), var(--color-warning-light));
+  color: var(--color-warning-text);
+}
+
+.red {
+  background: linear-gradient(90deg, var(--color-error), var(--color-error-light));
+  color: var(--color-error);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Refill time estimate */
+.refillEstimate {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  margin-left: auto;
+}
+
+/* Refill rate */
+.refillRate {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+}
+
+.refillIcon {
+  font-size: 10px;
+}
+
+/* Compact badge */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  border-radius: var(--radius-full);
+}
+
+.badgeGreen {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.badgeYellow {
+  background: var(--color-warning-bg);
+  color: var(--color-warning-text);
+}
+
+.badgeRed {
+  background: var(--color-error-bg);
+  color: var(--color-error);
+}

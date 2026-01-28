@@ -1,0 +1,134 @@
+/**
+ * Amount Input Styles - Mobile First
+ * Base styles are for mobile, then scale up with min-width queries
+ */
+
+/* ============================================
+   BASE STYLES (Mobile: < 480px)
+   ============================================ */
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  min-height: var(--touch-target-min);
+  background: white;
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.container:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(8, 71, 247, 0.1);
+}
+
+.input {
+  flex: 1;
+  padding: var(--spacing-3);
+  font-size: 16px; /* Prevent iOS zoom on focus */
+  font-weight: 500;
+  color: var(--color-dark);
+  border: none;
+  background: transparent;
+}
+
+.input:focus {
+  outline: none;
+}
+
+.input::placeholder {
+  color: var(--color-gray-400);
+}
+
+.input:disabled {
+  background: var(--color-gray-50);
+  cursor: not-allowed;
+}
+
+.symbol {
+  padding: var(--spacing-2) var(--spacing-3);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-gray-600);
+  background: var(--color-gray-50);
+  border-left: 1px solid var(--color-gray-200);
+}
+
+/* Error state */
+.container.error {
+  border-color: var(--color-error);
+}
+
+.container.error:focus-within {
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 3px rgba(229, 73, 24, 0.1);
+}
+
+/* Valid state */
+.container.valid {
+  border-color: var(--color-success);
+}
+
+.container.valid:focus-within {
+  border-color: var(--color-success);
+  box-shadow: 0 0 0 3px rgba(33, 123, 113, 0.1);
+}
+
+/* Validation icon */
+.validationIcon {
+  display: flex;
+  align-items: center;
+  padding-right: var(--spacing-2);
+}
+
+/* Max button - Mobile optimized */
+.maxButton {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  min-height: 32px;
+  padding: var(--spacing-1) var(--spacing-3);
+  margin-right: var(--spacing-2);
+  background: var(--color-gray-100);
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--color-primary);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.maxButton:hover:not(:disabled) {
+  background: var(--color-gray-200);
+}
+
+.maxButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ============================================
+   SMALL TABLETS (>= 480px)
+   ============================================ */
+@media (min-width: 480px) {
+  .input {
+    font-size: var(--font-size-lg);
+    padding: var(--spacing-3) var(--spacing-4);
+  }
+
+  .symbol {
+    padding: var(--spacing-3) var(--spacing-4);
+    font-size: var(--font-size-sm);
+  }
+
+  .maxButton {
+    padding: var(--spacing-1) var(--spacing-2);
+  }
+}

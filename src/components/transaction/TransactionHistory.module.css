@@ -1,0 +1,253 @@
+/**
+ * Transaction History Drawer Styles - Mobile First
+ * Base styles are for mobile (bottom sheet), then scale up with min-width queries
+ */
+
+/* ============================================
+   BASE STYLES (Mobile: < 480px) - Bottom Sheet
+   ============================================ */
+
+/* Backdrop overlay */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--color-overlay);
+  z-index: 100;
+  animation: fadeIn var(--transition-fast) ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Drawer container - Bottom sheet on mobile */
+.drawer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: auto;
+  width: 100%;
+  max-height: 85vh;
+  background: var(--color-gray-50);
+  box-shadow: var(--shadow-lg);
+  z-index: 101;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  animation: slideUp var(--transition-normal) ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-3);
+  background: white;
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.headerTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.title {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-dark);
+  margin: 0;
+}
+
+.pendingBadge {
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: var(--color-primary);
+  background: var(--color-primary-bg);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+.closeButton {
+  width: var(--touch-target-min);
+  height: var(--touch-target-min);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-xl);
+  color: var(--color-gray-500);
+  border-radius: var(--radius-md);
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.closeButton:hover {
+  background: var(--color-gray-100);
+  color: var(--color-dark);
+}
+
+/* Content area */
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-3);
+}
+
+/* Empty state */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-8);
+  text-align: center;
+}
+
+.emptyIcon {
+  font-size: 48px;
+  margin-bottom: var(--spacing-4);
+  color: var(--color-gray-300);
+}
+
+.emptyText {
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  color: var(--color-gray-700);
+  margin: 0 0 var(--spacing-1) 0;
+}
+
+.emptySubtext {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+  margin: 0;
+}
+
+/* Transaction list */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+/* Footer */
+.footer {
+  padding: var(--spacing-4);
+  background: white;
+  border-top: 1px solid var(--color-gray-200);
+  text-align: center;
+}
+
+.clearButton {
+  font-size: var(--font-size-sm);
+  color: var(--color-error);
+  padding: var(--spacing-2) var(--spacing-4);
+  border-radius: var(--radius-md);
+  min-height: var(--touch-target-min);
+  transition: background var(--transition-fast);
+}
+
+.clearButton:hover {
+  background: var(--color-error-bg);
+}
+
+.footerNote {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-400);
+  margin: var(--spacing-2) 0 0 0;
+}
+
+/* History button (for header) */
+.historyButton {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  min-height: var(--touch-target-min);
+  padding: var(--spacing-2) var(--spacing-3);
+  background: var(--color-gray-800);
+  border-radius: var(--radius-md);
+  color: white;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  transition: background var(--transition-fast);
+}
+
+.historyButton:hover {
+  background: var(--color-gray-700);
+}
+
+.historyIcon {
+  font-size: var(--font-size-base);
+  display: flex;
+  align-items: center;
+}
+
+.historyLabel {
+  color: var(--color-gray-300);
+}
+
+.historyBadge {
+  background: var(--color-primary);
+  color: white;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: var(--radius-full);
+  min-width: 18px;
+  text-align: center;
+}
+
+/* ============================================
+   SMALL TABLETS (>= 480px) - Side Drawer
+   ============================================ */
+@media (min-width: 480px) {
+  .drawer {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: auto;
+    width: 100%;
+    max-width: 400px;
+    max-height: none;
+    border-radius: 0;
+    animation: slideIn var(--transition-normal) ease-out;
+  }
+
+  .closeButton {
+    width: 32px;
+    height: 32px;
+  }
+
+  .header {
+    padding: var(--spacing-4);
+  }
+
+  .content {
+    padding: var(--spacing-4);
+  }
+}

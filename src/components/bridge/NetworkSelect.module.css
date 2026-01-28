@@ -1,0 +1,182 @@
+/**
+ * Network Select Styles - Mobile First
+ * Base styles are for mobile, then scale up with min-width queries
+ */
+
+/* ============================================
+   BASE STYLES (Mobile: < 480px)
+   ============================================ */
+
+.container {
+  position: relative;
+  width: 100%;
+}
+
+/* Trigger button - Mobile optimized */
+.trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: var(--touch-target-min);
+  padding: var(--spacing-3);
+  font-size: var(--font-size-base);
+  color: var(--color-dark);
+  background: white;
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.trigger:hover {
+  border-color: var(--color-gray-400);
+}
+
+.trigger:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(8, 71, 247, 0.1);
+}
+
+.trigger.open {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(8, 71, 247, 0.1);
+}
+
+/* Selected value display */
+.selected {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.placeholder {
+  color: var(--color-gray-500);
+}
+
+.arrow {
+  display: flex;
+  align-items: center;
+  color: var(--color-gray-500);
+  transition: transform var(--transition-fast);
+}
+
+.trigger.open .arrow {
+  transform: rotate(180deg);
+}
+
+/* Chain logo */
+.logo {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+/* Network name and type */
+.networkName {
+  font-weight: 500;
+  color: var(--color-dark);
+}
+
+.networkType {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  margin-left: auto;
+  padding-left: var(--spacing-2);
+}
+
+/* Dropdown menu - Mobile optimized */
+.dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  z-index: 100;
+  list-style: none;
+  padding: var(--spacing-1);
+  margin: 0;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+/* Option item - Mobile optimized */
+.option {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  min-height: var(--touch-target-min);
+  padding: var(--spacing-3);
+  font-size: var(--font-size-base);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+  text-align: left;
+}
+
+.option:hover {
+  background: var(--color-gray-100);
+}
+
+.option:focus {
+  outline: none;
+  background: var(--color-gray-100);
+}
+
+.optionSelected {
+  background: rgba(8, 71, 247, 0.08);
+}
+
+.optionSelected:hover {
+  background: rgba(8, 71, 247, 0.12);
+}
+
+.optionSelected .networkName {
+  color: var(--color-primary);
+}
+
+/* Chain icon backgrounds for visual hierarchy */
+.chainIcon {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-full);
+  background: var(--color-gray-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.option:hover .chainIcon {
+  background: var(--color-primary-light);
+}
+
+/* ============================================
+   SMALL TABLETS (>= 480px)
+   ============================================ */
+@media (min-width: 480px) {
+  .trigger {
+    padding: var(--spacing-3) var(--spacing-4);
+  }
+
+  .dropdown {
+    max-height: 300px;
+  }
+
+  .option {
+    padding: var(--spacing-3);
+  }
+
+  .networkType {
+    font-size: var(--font-size-sm);
+  }
+}

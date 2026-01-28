@@ -1,0 +1,31 @@
+/**
+ * App Layout Styles
+ *
+ * Uses CSS Grid for a simple header-main-footer layout
+ * with the main content centered and footer at the bottom.
+ */
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: var(--spacing-8) var(--spacing-4);
+}
+
+.container {
+  width: 100%;
+  max-width: 520px;
+}
+
+@media (min-width: 640px) {
+  .main {
+    padding: var(--spacing-12) var(--spacing-6);
+  }
+}

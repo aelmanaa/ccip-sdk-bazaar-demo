@@ -1,0 +1,101 @@
+/**
+ * Address Input Styles - Mobile First
+ * Base styles are for mobile, then scale up with min-width queries
+ */
+
+/* ============================================
+   BASE STYLES (Mobile: < 480px)
+   ============================================ */
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  min-height: var(--touch-target-min);
+}
+
+/* Container for input with validation icon */
+.container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: white;
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-lg);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.container:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(8, 71, 247, 0.1);
+}
+
+.container.valid {
+  border-color: var(--color-success);
+}
+
+.container.invalid {
+  border-color: var(--color-error);
+}
+
+.input {
+  flex: 1;
+  padding: var(--spacing-3);
+  font-size: 16px; /* Prevent iOS zoom on focus */
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  color: var(--color-dark);
+  background: transparent;
+  border: none;
+}
+
+.input:focus {
+  outline: none;
+}
+
+.input::placeholder {
+  color: var(--color-gray-400);
+  font-family: var(--font-family);
+}
+
+.input:disabled {
+  background: var(--color-gray-50);
+  cursor: not-allowed;
+}
+
+/* Valid state */
+.input.valid {
+  border-color: var(--color-success);
+}
+
+.input.valid:focus {
+  border-color: var(--color-success);
+  box-shadow: 0 0 0 3px rgba(33, 123, 113, 0.1);
+}
+
+/* Validation icon */
+.validationIcon {
+  display: flex;
+  align-items: center;
+  padding-right: var(--spacing-3);
+  color: var(--color-gray-500);
+}
+
+.validationIcon.valid {
+  color: var(--color-success);
+}
+
+.validationIcon.invalid {
+  color: var(--color-error);
+}
+
+/* ============================================
+   SMALL TABLETS (>= 480px)
+   ============================================ */
+@media (min-width: 480px) {
+  .input {
+    font-size: var(--font-size-sm);
+    padding: var(--spacing-3) var(--spacing-4);
+  }
+}

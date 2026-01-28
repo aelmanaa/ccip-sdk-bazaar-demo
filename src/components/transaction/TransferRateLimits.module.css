@@ -1,0 +1,184 @@
+/**
+ * Transfer Rate Limits Component Styles - Mobile First
+ * Base styles are for mobile, then scale up with min-width queries
+ */
+
+/* ============================================
+   BASE STYLES (Mobile: < 480px)
+   ============================================ */
+
+.container {
+  padding: var(--spacing-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-4);
+}
+
+.title {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--spacing-3) 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.rateLimits {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-4);
+}
+
+.rateLimitCard {
+  padding: var(--spacing-4);
+  background: var(--color-surface-elevated);
+  border-radius: var(--radius-md);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-3);
+  padding-bottom: var(--spacing-3);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.chainLogo {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.cardInfo {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.cardLabel {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.networkName {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.limitRows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.limitRow {
+  padding: var(--spacing-2);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+}
+
+.limitRow.highlighted {
+  border: 1px solid var(--color-primary);
+  background: rgba(0, 82, 255, 0.05);
+}
+
+.limitHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-1);
+}
+
+.limitLabel {
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.limitValue {
+  font-size: var(--font-size-xs);
+  font-family: var(--font-mono);
+  color: var(--color-text-primary);
+}
+
+.noLimit {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+}
+
+.unlimited {
+  font-size: var(--font-size-xs);
+  color: var(--color-success);
+  font-weight: 500;
+}
+
+/* Progress bar */
+.progressBar {
+  height: 6px;
+  background: var(--color-surface-elevated);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  margin-bottom: var(--spacing-1);
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: var(--radius-sm);
+  transition: width var(--transition-normal);
+}
+
+.progressFill.green {
+  background: var(--color-success);
+}
+
+.progressFill.yellow {
+  background: var(--color-warning);
+}
+
+.progressFill.red {
+  background: var(--color-error);
+}
+
+/* Meta info */
+.limitMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.percentage {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.refillRate {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+}
+
+/* Polling note */
+.pollingNote {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  margin: var(--spacing-3) 0 0 0;
+  text-align: center;
+}
+
+/* ============================================
+   SMALL TABLETS (>= 480px)
+   ============================================ */
+@media (min-width: 480px) {
+  .rateLimits {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

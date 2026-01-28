@@ -1,0 +1,137 @@
+/**
+ * CopyableAddress Component Styles - Mobile First
+ * Uses CSS variables consistently for spacing, typography, and border-radius
+ */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+.container.inline {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.addressWrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+}
+
+.address {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  background: var(--color-surface-elevated);
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--radius-sm);
+  cursor: default;
+  white-space: nowrap;
+}
+
+.copyButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: var(--color-surface-elevated);
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.copyButton:hover {
+  background: var(--color-border);
+  color: var(--color-text-primary);
+}
+
+.copyButton:active {
+  transform: scale(0.95);
+}
+
+/* Tooltip */
+.tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: var(--spacing-2) var(--spacing-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  z-index: 100;
+  white-space: nowrap;
+}
+
+.tooltip code {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+
+.tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--color-border);
+}
+
+/* Address List Styles */
+.listContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+.listLabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.addressList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+/* Make addresses in list more compact */
+.addressList .addressWrapper {
+  width: fit-content;
+}
+
+.addressList .address {
+  padding: 2px var(--spacing-1);
+  font-size: var(--font-size-xs);
+}
+
+.addressList .copyButton {
+  width: 20px;
+  height: 20px;
+}
+
+.addressList .copyButton svg {
+  width: 12px;
+  height: 12px;
+}

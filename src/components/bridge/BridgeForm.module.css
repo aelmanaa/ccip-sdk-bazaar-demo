@@ -1,0 +1,235 @@
+/**
+ * Bridge Form Styles - Mobile First
+ * Base styles are for mobile, then scale up with min-width queries
+ */
+
+/* ============================================
+   BASE STYLES (Mobile: < 480px)
+   ============================================ */
+
+.form {
+  background: white;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: var(--spacing-3);
+}
+
+.title {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-dark);
+  margin: 0 0 var(--spacing-1) 0;
+}
+
+.subtitle {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  margin: 0 0 var(--spacing-4) 0;
+}
+
+.section {
+  margin-bottom: var(--spacing-3);
+}
+
+.label {
+  display: block;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-gray-700);
+  margin-bottom: var(--spacing-2);
+}
+
+.balances {
+  display: grid;
+  grid-template-columns: 1fr; /* Single column on mobile */
+  gap: var(--spacing-3);
+  padding: var(--spacing-3);
+  background: var(--color-gray-50);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-4);
+}
+
+.balance {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+.balanceLabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+}
+
+.balanceValue {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-dark);
+}
+
+.hint {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  margin-top: var(--spacing-1);
+}
+
+.actions {
+  margin-top: var(--spacing-4);
+}
+
+.button {
+  width: 100%;
+  min-height: var(--touch-target-min);
+  padding: var(--spacing-3);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: white;
+  background: var(--color-primary);
+  border-radius: var(--radius-lg);
+  transition:
+    background var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.button:hover:not(:disabled) {
+  background: var(--color-primary-dark);
+}
+
+.button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.button:disabled {
+  background: var(--color-gray-300);
+  cursor: not-allowed;
+}
+
+.error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-3);
+  background: var(--color-error-bg);
+  border: 1px solid var(--color-error-border);
+  border-radius: var(--radius-md);
+  color: var(--color-error);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--spacing-4);
+}
+
+.errorClose {
+  font-size: var(--font-size-lg);
+  color: var(--color-error);
+  padding: var(--spacing-1);
+  line-height: 1;
+  min-width: var(--touch-target-min);
+  min-height: var(--touch-target-min);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.note {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  text-align: center;
+  margin-top: var(--spacing-4);
+}
+
+.note a {
+  color: var(--color-primary);
+}
+
+/* Button loading state */
+.button.loading {
+  position: relative;
+  color: transparent;
+}
+
+.button.loading::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  top: 50%;
+  left: 50%;
+  margin-top: -10px;
+  margin-left: -10px;
+  border: 2px solid transparent;
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Wallet indicator */
+.walletIndicator {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-3);
+  background: var(--color-gray-50);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-600);
+  margin-bottom: var(--spacing-4);
+}
+
+.walletIcon {
+  font-size: var(--font-size-base);
+  display: flex;
+  align-items: center;
+}
+
+/* ============================================
+   SMALL TABLETS (>= 480px)
+   ============================================ */
+@media (min-width: 480px) {
+  .form {
+    padding: var(--spacing-4);
+    border-radius: var(--radius-lg);
+  }
+
+  .title {
+    font-size: var(--font-size-xl);
+  }
+
+  .subtitle {
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--spacing-6);
+  }
+
+  .section {
+    margin-bottom: var(--spacing-4);
+  }
+
+  .balances {
+    grid-template-columns: 1fr 1fr; /* Two columns on larger screens */
+  }
+
+  .button {
+    padding: var(--spacing-4);
+  }
+
+  .actions {
+    margin-top: var(--spacing-6);
+  }
+}
+
+/* ============================================
+   TABLETS (>= 768px)
+   ============================================ */
+@media (min-width: 768px) {
+  .form {
+    padding: var(--spacing-6);
+    border-radius: var(--radius-xl);
+  }
+
+  .title {
+    font-size: var(--font-size-2xl);
+  }
+}

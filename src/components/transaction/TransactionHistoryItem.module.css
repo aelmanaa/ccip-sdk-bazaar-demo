@@ -1,0 +1,175 @@
+/**
+ * Transaction History Item Styles
+ */
+
+.item {
+  position: relative;
+  background: white;
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-3);
+  transition: box-shadow var(--transition-fast);
+}
+
+.item:hover {
+  box-shadow: var(--shadow-sm);
+}
+
+/* Header with route and status */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-2);
+}
+
+.route {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.network {
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: var(--color-gray-700);
+}
+
+.arrow {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-400);
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+}
+
+.statusIcon {
+  font-size: 10px;
+}
+
+.statusLabel {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Status colors */
+.success {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.failed {
+  background: var(--color-error-bg);
+  color: var(--color-error);
+}
+
+.timeout {
+  background: var(--color-warning-bg);
+  color: var(--color-warning-text);
+}
+
+.pending {
+  background: var(--color-primary-bg);
+  color: var(--color-primary);
+}
+
+/* Amount display */
+.amount {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-1);
+  margin-bottom: var(--spacing-2);
+}
+
+.amountValue {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-dark);
+}
+
+.amountSymbol {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+}
+
+/* Details */
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  margin-bottom: var(--spacing-2);
+}
+
+.detailRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--font-size-xs);
+}
+
+.detailLabel {
+  color: var(--color-gray-500);
+}
+
+.detailValue {
+  color: var(--color-gray-700);
+}
+
+code.detailValue {
+  background: var(--color-gray-100);
+  padding: 1px 4px;
+  border-radius: var(--radius-sm);
+  font-family: monospace;
+}
+
+/* Explorer links */
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+}
+
+.link {
+  font-size: var(--font-size-xs);
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+/* Remove button */
+.removeButton {
+  position: absolute;
+  top: var(--spacing-2);
+  right: var(--spacing-2);
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-base);
+  color: var(--color-gray-400);
+  opacity: 0;
+  transition:
+    opacity var(--transition-fast),
+    color var(--transition-fast);
+  border-radius: var(--radius-sm);
+}
+
+.item:hover .removeButton {
+  opacity: 1;
+}
+
+.removeButton:hover {
+  color: var(--color-error);
+  background: var(--color-error-bg);
+}

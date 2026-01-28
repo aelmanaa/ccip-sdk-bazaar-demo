@@ -1,0 +1,475 @@
+/**
+ * Transaction Status Styles - Mobile First
+ * Base styles are for mobile, then scale up with min-width queries
+ */
+
+/* ============================================
+   BASE STYLES (Mobile: < 480px)
+   ============================================ */
+
+.container {
+  text-align: center;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-4);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--spacing-4);
+}
+
+.header.success {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.header.error {
+  background: var(--color-error-bg);
+  color: var(--color-error);
+}
+
+.header.pending {
+  background: var(--color-primary-bg);
+  color: var(--color-primary);
+}
+
+.header.warning {
+  background: var(--color-warning-bg);
+  color: var(--color-warning-text);
+}
+
+.icon {
+  font-size: var(--font-size-xl);
+  display: flex;
+  align-items: center;
+}
+
+.title {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+}
+
+.description {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  margin-bottom: var(--spacing-4);
+}
+
+.elapsedTime {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  margin-bottom: var(--spacing-4);
+}
+
+.timeoutWarning {
+  background: var(--color-warning-bg);
+  border: 1px solid var(--color-warning-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-3);
+  margin-bottom: var(--spacing-4);
+}
+
+.timeoutWarning p {
+  font-size: var(--font-size-xs);
+  color: var(--color-warning-text);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.timeoutWarning p + p {
+  margin-top: var(--spacing-1);
+}
+
+/* Progress Steps */
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-6);
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  padding: var(--spacing-2);
+  background: var(--color-gray-50);
+  border-radius: var(--radius-md);
+  /* Smooth transitions for state changes */
+  transition:
+    background-color var(--transition-normal) ease-out,
+    opacity var(--transition-normal) ease-out,
+    transform var(--transition-fast) ease-out;
+}
+
+.step.pending {
+  opacity: 0.5;
+}
+
+.step.active {
+  background: var(--color-primary-bg);
+  animation: stepActivate 0.3s ease-out;
+}
+
+.step.complete {
+  background: var(--color-success-bg);
+  animation: stepComplete 0.3s ease-out;
+}
+
+.step.error {
+  background: var(--color-error-bg);
+}
+
+/* Step state change animations */
+@keyframes stepActivate {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes stepComplete {
+  0% {
+    transform: scale(1);
+    background: var(--color-primary-bg);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+    background: var(--color-success-bg);
+  }
+}
+
+.stepDot {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  font-size: 10px;
+  font-weight: 600;
+  flex-shrink: 0;
+  /* Smooth transitions for dot state changes */
+  transition:
+    background-color var(--transition-normal) ease-out,
+    transform var(--transition-fast) ease-out;
+}
+
+.pending .stepDot {
+  background: var(--color-gray-300);
+  color: white;
+}
+
+.active .stepDot {
+  background: var(--color-primary);
+  color: white;
+}
+
+.complete .stepDot {
+  background: var(--color-success);
+  color: white;
+  animation: dotComplete 0.4s ease-out;
+}
+
+.error .stepDot {
+  background: var(--color-error);
+  color: white;
+}
+
+@keyframes dotComplete {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.3);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.stepText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+}
+
+.stepLabel {
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: var(--color-dark);
+}
+
+.stepSublabel {
+  display: none; /* Hidden on mobile */
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+}
+
+/* Explorer Links */
+.links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-4);
+  align-items: stretch;
+}
+
+.link {
+  font-size: var(--font-size-sm);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-2);
+  min-height: var(--touch-target-min);
+  border-radius: var(--radius-md);
+  transition: background var(--transition-fast);
+}
+
+.link:hover {
+  text-decoration: underline;
+  background: var(--color-gray-50);
+}
+
+/* Message ID */
+.messageId {
+  background: var(--color-gray-50);
+  padding: var(--spacing-3);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-4);
+}
+
+.messageIdLabel {
+  display: block;
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  margin-bottom: var(--spacing-1);
+}
+
+.messageIdValue {
+  font-size: var(--font-size-sm);
+  color: var(--color-dark);
+  word-break: break-all;
+}
+
+/* Button */
+.button {
+  width: 100%;
+  min-height: var(--touch-target-min);
+  padding: var(--spacing-3) var(--spacing-4);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: white;
+  background: var(--color-primary);
+  border-radius: var(--radius-lg);
+  transition: background var(--transition-fast);
+}
+
+.button:hover {
+  background: var(--color-primary-dark);
+}
+
+/* Success animation */
+@keyframes successPop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.successIcon {
+  animation: successPop 0.4s ease-out;
+}
+
+.successHeader {
+  animation: fadeIn 0.3s ease-out 0.2s both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Timeline header with ETA */
+.timeline {
+  margin-bottom: var(--spacing-4);
+}
+
+.timelineHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-3);
+}
+
+.eta {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+}
+
+/* Timeout actions */
+.timeoutActions {
+  background: var(--color-gray-50);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-4);
+  margin-bottom: var(--spacing-4);
+}
+
+.timeoutMessage {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-700);
+  margin: 0 0 var(--spacing-3) 0;
+}
+
+.timeoutOptions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-3);
+}
+
+.actionLink {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-2) var(--spacing-3);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-primary);
+  text-decoration: none;
+  min-height: var(--touch-target-min);
+}
+
+.actionLink:hover {
+  background: var(--color-gray-50);
+}
+
+.actionButton {
+  flex: 1;
+  padding: var(--spacing-2) var(--spacing-3);
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  min-height: var(--touch-target-min);
+}
+
+.actionButton:hover {
+  background: var(--color-primary-dark);
+}
+
+.timeoutNote {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  margin: 0;
+}
+
+/* Explorer Links Enhancement */
+.explorerLinks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.explorerLink {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2);
+  border-radius: var(--radius-md);
+  transition: background var(--transition-fast);
+}
+
+.explorerLink:hover {
+  background: var(--color-gray-50);
+}
+
+/* ============================================
+   SMALL TABLETS (>= 480px)
+   ============================================ */
+@media (min-width: 480px) {
+  .steps {
+    gap: var(--spacing-3);
+  }
+
+  .step {
+    padding: var(--spacing-3);
+  }
+
+  .stepDot {
+    width: 24px;
+    height: 24px;
+    font-size: var(--font-size-xs);
+  }
+
+  .stepLabel {
+    font-size: var(--font-size-sm);
+  }
+
+  .stepSublabel {
+    display: block; /* Show on larger screens */
+  }
+
+  .link {
+    display: inline;
+    padding: 0;
+    min-height: auto;
+  }
+
+  .link:hover {
+    background: none;
+  }
+
+  .links {
+    align-items: center;
+  }
+
+  .timeoutOptions {
+    flex-direction: row;
+  }
+}
