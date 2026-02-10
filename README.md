@@ -189,7 +189,25 @@ const minutes = Math.round(latency.totalMs / 60000)
 console.log(`Estimated time: ~${minutes} minutes`)
 ```
 
-### 4. Generate Unsigned Transaction (Browser Wallet Compatible)
+### 4. Balance Queries
+
+```typescript
+// Get native token balance (ETH, AVAX, SOL)
+const nativeBalance = await chain.getBalance({ holder: walletAddress })
+
+// Get ERC20/SPL token balance
+const tokenBalance = await chain.getBalance({
+  holder: walletAddress,
+  token: tokenAddress,
+})
+
+console.log(`Native: ${formatEther(nativeBalance)} ETH`)
+console.log(`Token: ${formatUnits(tokenBalance, tokenDecimals)}`)
+```
+
+> See `src/hooks/useTokenBalance.ts` for the complete implementation with periodic refresh.
+
+### 5. Generate Unsigned Transaction (Browser Wallet Compatible)
 
 ```typescript
 // Generate unsigned transaction for wallet signing
@@ -212,7 +230,55 @@ for (const tx of unsignedTx.transactions) {
 }
 ```
 
-### 5. Message Status Tracking
+### 6. Token Pool Introspection
+
+Query token pool configuration and rate limits for a specific lane:
+
+```typescript
+import { EVMChain, SolanaChain } from '@chainlink/ccip-sdk'
+
+// Step 1: Get Token Admin Registry for the router
+const registryAddress = await chain.getTokenAdminRegistryFor(routerAddress)
+
+// Step 2: Get token configuration (pool address) from registry
+const tokenConfig = await chain.getRegistryTokenConfig(registryAddress, tokenAddress)
+const poolAddress = tokenConfig.tokenPool
+
+// Step 3: Get pool configuration (type and version)
+// Use instanceof narrowing for full type safety
+if (chain instanceof EVMChain) {
+  const poolConfig = await chain.getTokenPoolConfig(poolAddress)
+  console.log(`Pool type: ${poolConfig.typeAndVersion}`) // e.g., "BurnMintTokenPool 1.5.0"
+} else if (chain instanceof SolanaChain) {
+  const poolConfig = await chain.getTokenPoolConfig(poolAddress)
+  console.log(`Pool type: ${poolConfig.typeAndVersion ?? 'Unknown'}`)
+  // Solana-specific: poolConfig.tokenPoolProgram
+}
+
+// Step 4: Get remote chain configuration and rate limits
+const remotes = await chain.getTokenPoolRemotes(poolAddress, destChainSelector)
+
+// Extract rate limit information
+const remote = Object.values(remotes)[0]
+if (remote) {
+  console.log(`Remote token: ${remote.remoteToken}`)
+  console.log(`Remote pools: ${remote.remotePools.join(', ')}`)
+
+  // Rate limits (null if disabled)
+  if (remote.outboundRateLimiterState) {
+    const { tokens, capacity, rate } = remote.outboundRateLimiterState
+    console.log(`Outbound: ${tokens}/${capacity} tokens, refill ${rate}/sec`)
+  }
+  if (remote.inboundRateLimiterState) {
+    const { tokens, capacity, rate } = remote.inboundRateLimiterState
+    console.log(`Inbound: ${tokens}/${capacity} tokens, refill ${rate}/sec`)
+  }
+}
+```
+
+> See `src/hooks/useTokenPoolInfo.ts` for the complete implementation with rate limit display.
+
+### 7. Message Status Tracking
 
 ```typescript
 // After sending, get the message ID from the transaction
@@ -221,10 +287,41 @@ const messageId = messages[0].message.messageId
 
 // Poll status until final
 const status = await chain.getMessageById(messageId)
-// status.state: 'SENT' | 'COMMITTED' | 'SUCCESS' | 'FAILED'
+// status.metadata.status: MessageStatus enum value
 ```
 
-### 6. CCIP Explorer Links
+### 8. Message Lifecycle
+
+The SDK provides a `MessageStatus` enum for tracking message state:
+
+```typescript
+import { MessageStatus } from '@chainlink/ccip-sdk'
+
+// Full lifecycle stages
+MessageStatus.Unknown // Initial/unknown state
+MessageStatus.Sent // Transaction submitted on source chain
+MessageStatus.SourceFinalized // Source chain reached finality
+MessageStatus.Committed // DON committed merkle root to destination
+MessageStatus.Blessed // Risk Management Network approved the message
+MessageStatus.Verifying // Verifying message on destination chain
+MessageStatus.Verified // Message verified, ready for execution
+MessageStatus.Success // Transfer completed successfully
+MessageStatus.Failed // Execution failed (can be retried)
+
+// Compare status
+const message = await chain.getMessageById(messageId)
+const status = message.metadata?.status
+
+if (status === MessageStatus.Success) {
+  console.log('Transfer complete!')
+} else if (status === MessageStatus.Failed) {
+  console.log('Transfer failed, may need manual retry')
+}
+```
+
+> See `src/hooks/useMessageStatus.ts` for the complete polling implementation with React Query.
+
+### 9. CCIP Explorer Links
 
 ```typescript
 import { getCCIPExplorerUrl } from '@chainlink/ccip-sdk'
@@ -237,9 +334,48 @@ const txUrl = getCCIPExplorerUrl('tx', txHash)
 // => 'https://ccip.chain.link/tx/0x...'
 ```
 
-### 7. Error Parsing (EVM and Solana)
+### 10. Error Handling
 
-The SDK provides chain-specific error parsing utilities to decode CCIP-specific errors:
+The SDK provides comprehensive error handling with the `CCIPError` class and chain-specific error parsing.
+
+#### CCIPError Class
+
+```typescript
+import { CCIPError, CCIPMessageIdNotFoundError, getRetryDelay } from '@chainlink/ccip-sdk'
+
+// Type guard to check if an error is a CCIP SDK error
+if (CCIPError.isCCIPError(error)) {
+  // Access error properties
+  console.log(error.message) // Error message
+  console.log(error.isTransient) // true if error is temporary (retry may help)
+  console.log(error.retryAfterMs) // Suggested retry delay in milliseconds
+  console.log(error.recovery) // Recovery suggestion text
+
+  // Use SDK utility for retry delay
+  const delay = getRetryDelay(error)
+  if (delay !== null) {
+    await new Promise((resolve) => setTimeout(resolve, delay))
+    // Retry the operation...
+  }
+}
+
+// CCIPMessageIdNotFoundError - expected during early polling
+// The message may not be indexed immediately after transaction
+try {
+  const message = await chain.getMessageById(messageId)
+} catch (error) {
+  if (error instanceof CCIPMessageIdNotFoundError) {
+    // Expected - message not indexed yet, keep polling
+    console.log('Message not found yet, will retry...')
+  }
+}
+```
+
+> See `src/utils/errors.ts` for the complete error categorization implementation.
+
+#### Error Parsing (EVM and Solana)
+
+The SDK also provides chain-specific error parsing utilities to decode CCIP-specific errors:
 
 ```typescript
 import { EVMChain, SolanaChain } from '@chainlink/ccip-sdk'
@@ -307,6 +443,46 @@ export function parseEVMError(error: unknown): ParsedCCIPError | undefined {
   }
 }
 ```
+
+### 11. SDK Types
+
+Key TypeScript types provided by the SDK (TypeScript infers these from SDK method return types):
+
+```typescript
+// RateLimiterState - Token bucket rate limiter state
+// null if rate limiting is disabled for the lane
+type RateLimiterState = {
+  tokens: bigint // Current tokens available in bucket
+  capacity: bigint // Maximum bucket capacity
+  rate: bigint // Refill rate (tokens per second)
+} | null
+
+// TokenPoolRemote - Remote chain pool configuration
+// Returned by chain.getTokenPoolRemotes()
+interface TokenPoolRemote {
+  remoteToken: string // Token address on remote chain
+  remotePools: string[] // Pool addresses on remote chain
+  inboundRateLimiterState: RateLimiterState // Inbound rate limit (null if disabled)
+  outboundRateLimiterState: RateLimiterState // Outbound rate limit (null if disabled)
+}
+```
+
+> See `src/hooks/useTokenPoolInfo.ts` for usage examples with rate limit display.
+
+### 12. Solana-Specific: Transaction Fetching
+
+For Solana, use `chain.getTransaction()` to fetch transaction details before extracting messages:
+
+```typescript
+// Solana: Get transaction details from signature
+const tx = await chain.getTransaction(signature)
+
+// Then extract messages from the transaction
+const messages = await chain.getMessagesInTx(tx)
+const messageId = messages[0]?.message.messageId
+```
+
+> See `src/hooks/useTransactionExecution.ts:308` for the complete Solana flow.
 
 ## Project Structure
 
@@ -559,8 +735,8 @@ if (sourceChain instanceof SolanaChain) {
 
 ```typescript
 // src/hooks/useTokenPoolInfo.ts
-const remotesRecord: Record<string, TokenPoolRemote> = remotesResult.data
-const remoteEntries = Object.values(remotesRecord)
+const remotes = remotesResult.data
+const remoteEntries = Object.values(remotes)
 if (remoteEntries.length > 0) {
   const remote = remoteEntries[0]
   // ... use remote safely

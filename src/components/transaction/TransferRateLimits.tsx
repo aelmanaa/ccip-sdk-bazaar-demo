@@ -10,7 +10,7 @@
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react'
-import type { RateLimiterState, TokenPoolRemote } from '@chainlink/ccip-sdk'
+import type { RateLimiterState } from '@chainlink/ccip-sdk'
 import { useChains } from '../../hooks/useChains'
 import {
   NETWORKS,
@@ -123,8 +123,7 @@ export function TransferRateLimits({
       )
 
       if (!remotesResult.timedOut && !remotesResult.error && remotesResult.data) {
-        const remotesRecord: Record<string, TokenPoolRemote> = remotesResult.data
-        const remoteEntries = Object.values(remotesRecord)
+        const remoteEntries = Object.values(remotesResult.data)
 
         if (remoteEntries.length > 0 && remoteEntries[0]) {
           const remote = remoteEntries[0]
@@ -188,8 +187,7 @@ export function TransferRateLimits({
       )
 
       if (!remotesResult.timedOut && !remotesResult.error && remotesResult.data) {
-        const remotesRecord: Record<string, TokenPoolRemote> = remotesResult.data
-        const remoteEntries = Object.values(remotesRecord)
+        const remoteEntries = Object.values(remotesResult.data)
 
         if (remoteEntries.length > 0 && remoteEntries[0]) {
           const remote = remoteEntries[0]

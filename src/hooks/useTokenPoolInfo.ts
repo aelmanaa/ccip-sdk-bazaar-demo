@@ -16,7 +16,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { EVMChain, SolanaChain } from '@chainlink/ccip-sdk'
-import type { RateLimiterState, TokenPoolRemote } from '@chainlink/ccip-sdk'
+import type { RateLimiterState } from '@chainlink/ccip-sdk'
 import { useChains } from './useChains'
 import { NETWORKS, getRouterAddress } from '../config'
 import { TIMEOUT_DEFAULTS, withTimeout } from '../utils/timeout'
@@ -231,10 +231,7 @@ export function useTokenPoolInfo(
        * Step 4: Get remote chain configuration
        *
        * CCIP SDK: chain.getTokenPoolRemotes(pool, destChainSelector)
-       * Returns Record<string, TokenPoolRemote> mapping network names to remote configs.
-       *
-       * SDK WORKAROUND (Issue #3b) - Will be fixed in next SDK version
-       * Return structure (Record with string keys) is not immediately clear from types.
+       * Returns remote pool config for the specified destination chain.
        * We extract values safely and take the first entry.
        *
        * This is the key function for understanding lane support!
@@ -252,9 +249,8 @@ export function useTokenPoolInfo(
         )
 
         if (!remotesResult.timedOut && !remotesResult.error && remotesResult.data) {
-          // SDK returns Record<string, TokenPoolRemote> - get the first (and likely only) entry
-          const remotesRecord: Record<string, TokenPoolRemote> = remotesResult.data
-          const remoteEntries = Object.values(remotesRecord)
+          // Get the first (and likely only) entry
+          const remoteEntries = Object.values(remotesResult.data)
 
           if (remoteEntries.length > 0) {
             const remote = remoteEntries[0]
