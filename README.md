@@ -774,63 +774,39 @@ function toRateLimitBucket(state: RateLimiterState): RateLimitBucket | null {
 // SDK internally uses: timer.unref?.()
 ```
 
-### Issue #5: Bundle Bloat When Using `manualChunks`
+### Issue #5: Tree-Shaking Not Working ✅ FIXED in v0.96.0
 
-**Problem:** When using Vite/Rollup's `manualChunks` to put `@chainlink/ccip-sdk` in a separate vendor chunk, tree-shaking breaks and ALL chain implementations get bundled.
+**Problem:** In v0.95.0, tree-shaking didn't work correctly - all chain implementations (EVM, Solana, Aptos, Sui, TON) were bundled even if you only used one chain.
 
-**Good news in v0.96.0:** Bundle size significantly improved! The `vendor-ccip` chunk reduced from **3.2 MB** (v0.95.0) to **1.0 MB** (v0.96.0) - a **68% reduction**.
-
-**Root cause:** The `manualChunks` configuration
-
-```javascript
-// vite.config.ts - THIS BREAKS TREE-SHAKING
-manualChunks: {
-  'vendor-ccip': ['@chainlink/ccip-sdk'],  // ← Forces entire SDK into one chunk
-}
-```
-
-**How to verify:**
+**Solution in v0.96.0:** Tree-shaking now works correctly. Only the chains you import are bundled:
 
 ```bash
-# Build and check the vendor-ccip chunk
-npm run build && ls -lh dist/assets/vendor-ccip-*.js
-# v0.96.0 Output: ~1.0M dist/assets/vendor-ccip-xxx.js (reduced from 3.2M in v0.95.0)
+# This demo uses EVMChain and SolanaChain
+# Verify unused chains are NOT in bundle:
+grep -l "AptosChain\|SuiChain\|TONChain" dist/assets/*.js
+# Result: No matches - tree-shaking works!
 ```
 
-**Solution:** Remove `@chainlink/ccip-sdk` from `manualChunks`
+**Bundle size comparison:**
 
-```javascript
-// vite.config.ts - TREE-SHAKING WORKS
-manualChunks: {
-  'vendor-react': ['react', 'react-dom'],
-  'vendor-solana': ['@solana/web3.js', ...],
-  'vendor-evm': ['wagmi', 'viem', ...],
-  // Don't include @chainlink/ccip-sdk - let tree-shaking work!
-}
-```
+| SDK Version | Bundle Size | Tree-Shaking |
+| ----------- | ----------- | ------------ |
+| v0.95.0     | 3.2 MB      | ❌ Broken    |
+| v0.96.0     | 1.0 MB      | ✅ Works     |
 
-**Bundle size comparison (with `manualChunks`):**
-
-| SDK Version | vendor-ccip Size | Improvement |
-| ----------- | ---------------- | ----------- |
-| v0.95.0     | 3.2 MB           | -           |
-| v0.96.0     | 1.0 MB           | **68%** ↓   |
-
-**Why this demo keeps manualChunks:** For educational purposes, we intentionally keep the configuration to demonstrate this issue. Production apps should remove the SDK from `manualChunks`.
-
-**Related:** [GitHub Issue #131](https://github.com/smartcontractkit/ccip-javascript-sdk/issues/131)
+The 1.0 MB is the legitimate size for EVM + Solana chain implementations used by this demo.
 
 ### Summary Table
 
-| Issue                               | Severity | Status in v0.96.0      | Action                     |
-| ----------------------------------- | -------- | ---------------------- | -------------------------- |
-| #1 `getMessageById` return type     | High     | ✅ Fixed               | Use `metadata` field       |
-| #2 Viem adapter + wagmi types       | Medium   | ❌ Still needed        | Keep type cast             |
-| #3a `getTokenPoolConfig` types      | Medium   | ✅ Fixed               | Method renamed to singular |
-| #3b `getTokenPoolRemotes` types     | Low      | ✅ Fixed               | Types now clear            |
-| #3c `RateLimiterState` nullability  | Low      | ✅ Fixed               | Explicit `\| null` type    |
-| #4 `setTimeout().unref()` error     | Medium   | ✅ Fixed               | Polyfill removed           |
-| #5 Bundle bloat with `manualChunks` | Medium   | Improved (68% smaller) | Remove SDK from chunks     |
+| Issue                              | Severity | Status in v0.96.0 | Action                     |
+| ---------------------------------- | -------- | ----------------- | -------------------------- |
+| #1 `getMessageById` return type    | High     | ✅ Fixed          | Use `metadata` field       |
+| #2 Viem adapter + wagmi types      | Medium   | ❌ Still needed   | Keep type cast             |
+| #3a `getTokenPoolConfig` types     | Medium   | ✅ Fixed          | Method renamed to singular |
+| #3b `getTokenPoolRemotes` types    | Low      | ✅ Fixed          | Types now clear            |
+| #3c `RateLimiterState` nullability | Low      | ✅ Fixed          | Explicit `\| null` type    |
+| #4 `setTimeout().unref()` error    | Medium   | ✅ Fixed          | Polyfill removed           |
+| #5 Tree-shaking not working        | Medium   | ✅ Fixed          | Only used chains bundled   |
 
 ## Resources
 
