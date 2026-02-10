@@ -491,27 +491,21 @@ cast sig "ErrorName(paramTypes)"
 
 During development of this demo, we discovered several SDK edge cases that required workarounds. This section documents them for educational purposes and to help other developers.
 
-> **Note:** Issues marked with ✅ will be fixed in the next SDK version.
+> **SDK Version:** This demo uses `@chainlink/ccip-sdk@0.96.0`. Issues marked with ✅ FIXED have been resolved in this version.
 
-### Issue #1: `getMessageById()` Return Type Mismatch ✅
+### Issue #1: `getMessageById()` Return Type Mismatch ✅ FIXED in v0.96.0
 
-**Problem:** `chain.getMessageById(messageId)` returns `CCIPRequest` type, but the actual API response includes additional fields (`status`, `receiptTransactionHash`).
+**Problem:** In v0.95.0, `chain.getMessageById(messageId)` returned `CCIPRequest` type, but the actual API response included additional fields (`status`, `receiptTransactionHash`).
 
-**Mitigation:** Type helper to extend the response with missing fields.
+**Solution in v0.96.0:** Status fields are now properly typed in the `metadata` property:
 
 ```typescript
 // src/hooks/useMessageStatus.ts
-type MessageStatusFields = {
-  status: (typeof MessageStatus)[keyof typeof MessageStatus]
-  receiptTransactionHash?: string
-}
+const message = await chain.getMessageById(messageId)
 
-function withStatusFields<T>(response: T): T & MessageStatusFields {
-  return response as T & MessageStatusFields
-}
-
-// Usage:
-const message = await chain.getMessageById(messageId).then(withStatusFields)
+// Access via metadata field (SDK v0.96.0+)
+const status = message.metadata?.status ?? MessageStatus.Unknown
+const destTxHash = message.metadata?.receiptTransactionHash ?? null
 ```
 
 ### Issue #2: Viem Adapter Type Compatibility with Wagmi
@@ -529,23 +523,39 @@ function toGenericPublicClient(
 }
 ```
 
-### Issue #3a: `getTokenPoolConfigs()` Return Type Unclear ✅
+### Issue #3a: `getTokenPoolConfig()` Return Type ✅ FIXED in v0.96.0
 
-**Problem:** The return type of `chain.getTokenPoolConfigs(poolAddress)` is not clearly defined in the SDK types.
+**Problem:** In v0.95.0, the method was named `getTokenPoolConfigs()` (plural) and return type was unclear.
 
-**Mitigation:** Explicit type annotation.
+**Solution in v0.96.0:** Method renamed to `getTokenPoolConfig()` (singular) with clear types. Use `instanceof` narrowing (SDK-recommended best practice) for full type safety:
 
 ```typescript
 // src/hooks/useTokenPoolInfo.ts
-const poolConfigPromise: Promise<{ token: string; router: string; typeAndVersion?: string }> =
-  sourceChain.getTokenPoolConfigs(poolAddress)
+// Best practice: instanceof narrowing gives full type safety
+if (sourceChain instanceof SolanaChain) {
+  const result = await withTimeout(
+    sourceChain.getTokenPoolConfig(poolAddress),
+    timeout,
+    'Solana pool config'
+  )
+  // TypeScript knows: result.data.tokenPoolProgram exists (Solana-specific)
+  typeAndVersion = result.data.typeAndVersion ?? 'Unknown'
+} else if (sourceChain instanceof EVMChain) {
+  const result = await withTimeout(
+    sourceChain.getTokenPoolConfig(poolAddress),
+    timeout,
+    'EVM pool config'
+  )
+  // TypeScript knows: result.data.typeAndVersion is guaranteed string
+  typeAndVersion = result.data.typeAndVersion
+}
 ```
 
-### Issue #3b: `getTokenPoolRemotes()` Return Structure Unclear ✅
+### Issue #3b: `getTokenPoolRemotes()` Return Structure ✅ FIXED in v0.96.0
 
-**Problem:** Returns `Record<string, TokenPoolRemote>` but this structure isn't immediately clear from IDE hints.
+**Problem:** In v0.95.0, the `Record<string, TokenPoolRemote>` return structure wasn't clear from IDE hints.
 
-**Mitigation:** Safe object value extraction with defensive checks.
+**Solution in v0.96.0:** Types are now clear. Code uses safe object value extraction:
 
 ```typescript
 // src/hooks/useTokenPoolInfo.ts
@@ -557,11 +567,11 @@ if (remoteEntries.length > 0) {
 }
 ```
 
-### Issue #3c: `RateLimiterState` Nullability ✅
+### Issue #3c: `RateLimiterState` Nullability ✅ FIXED in v0.96.0
 
-**Problem:** `RateLimiterState` from `TokenPoolRemote` can be null/undefined, but this isn't always clear from the types.
+**Problem:** In v0.95.0, `RateLimiterState` nullability wasn't always clear from the types.
 
-**Mitigation:** Conversion helper with explicit null handling.
+**Solution in v0.96.0:** SDK now types `RateLimiterState` as `{ ... } | null`. Our helper adds domain value with `isEnabled` flag:
 
 ```typescript
 // src/hooks/useTokenPoolInfo.ts
@@ -569,7 +579,7 @@ export interface RateLimitBucket {
   tokens: bigint
   capacity: bigint
   rate: bigint
-  isEnabled: boolean
+  isEnabled: boolean // Derived from RateLimiterState !== null
 }
 
 function toRateLimitBucket(state: RateLimiterState): RateLimitBucket | null {
@@ -578,30 +588,22 @@ function toRateLimitBucket(state: RateLimiterState): RateLimitBucket | null {
 }
 ```
 
-### Issue #4: Browser Compatibility - `setTimeout().unref()` ✅
+### Issue #4: Browser Compatibility - `setTimeout().unref()` ✅ FIXED in v0.96.0
 
-**Problem:** The SDK's retry logic uses `setTimeout(...).unref()`, which is a Node.js-specific API that doesn't exist in browsers.
+**Problem:** In v0.95.0, the SDK's retry logic used `setTimeout(...).unref()`, which is a Node.js-specific API that doesn't exist in browsers.
 
-**Mitigation:** Polyfill in the app entry point.
+**Solution in v0.96.0:** SDK now uses optional chaining (`unref?.()`), making browser polyfill unnecessary.
 
 ```typescript
-// src/main.tsx
-if (typeof window !== 'undefined') {
-  const originalSetTimeout = window.setTimeout
-  window.setTimeout = function (callback, delay, ...args) {
-    const id = originalSetTimeout(callback, delay, ...args)
-    return Object.assign(id, {
-      unref: () => {
-        /* no-op in browser */
-      },
-    })
-  }
-}
+// No polyfill needed in v0.96.0!
+// SDK internally uses: timer.unref?.()
 ```
 
 ### Issue #5: Bundle Bloat When Using `manualChunks`
 
-**Problem:** When using Vite/Rollup's `manualChunks` to put `@chainlink/ccip-sdk` in a separate vendor chunk, tree-shaking breaks and ALL chain implementations (EVM, Solana, Sui, Aptos, TON) get bundled—even when only some are used.
+**Problem:** When using Vite/Rollup's `manualChunks` to put `@chainlink/ccip-sdk` in a separate vendor chunk, tree-shaking breaks and ALL chain implementations get bundled.
+
+**Good news in v0.96.0:** Bundle size significantly improved! The `vendor-ccip` chunk reduced from **3.2 MB** (v0.95.0) to **1.0 MB** (v0.96.0) - a **68% reduction**.
 
 **Root cause:** The `manualChunks` configuration
 
@@ -612,25 +614,12 @@ manualChunks: {
 }
 ```
 
-When you specify a package in `manualChunks`, Vite/Rollup interprets this as "include the entire package", which:
-
-1. Evaluates the SDK's `index.js` entry point
-2. Pulls in ALL static imports (all chain implementations)
-3. Defeats tree-shaking completely
-
-**How to verify (this demo uses manualChunks, so bloat exists):**
+**How to verify:**
 
 ```bash
 # Build and check the vendor-ccip chunk
 npm run build && ls -lh dist/assets/vendor-ccip-*.js
-# Output: 3.1M dist/assets/vendor-ccip-xxx.js  (too large for just EVM + Solana)
-
-# Confirm unused chain code is bundled:
-grep -oE '"@mysten/[^"]*"' dist/assets/vendor-ccip-*.js | sort -u
-# Output: @mysten/SuiClient, @mysten/transaction, etc. (Sui - we don't use!)
-
-grep -oE 'Aptos[A-Z][a-zA-Z]*Error' dist/assets/vendor-ccip-*.js | sort -u | head -3
-# Output: AptosAddressInvalidError, AptosApiError, etc. (Aptos - we don't use!)
+# v0.96.0 Output: ~1.0M dist/assets/vendor-ccip-xxx.js (reduced from 3.2M in v0.95.0)
 ```
 
 **Solution:** Remove `@chainlink/ccip-sdk` from `manualChunks`
@@ -645,30 +634,28 @@ manualChunks: {
 }
 ```
 
-**Verified results:**
+**Bundle size comparison (with `manualChunks`):**
 
-| Configuration                                 | Bundle Size | Unused Chains       |
-| --------------------------------------------- | ----------- | ------------------- |
-| With `'vendor-ccip': ['@chainlink/ccip-sdk']` | **8.6 MB**  | Sui ✓ Aptos ✓ TON ✓ |
-| Without ccip-sdk in manualChunks              | **6.5 MB**  | None (tree-shaken)  |
+| SDK Version | vendor-ccip Size | Improvement |
+| ----------- | ---------------- | ----------- |
+| v0.95.0     | 3.2 MB           | -           |
+| v0.96.0     | 1.0 MB           | **68%** ↓   |
 
-When removed from `manualChunks`, the SDK code is distributed across other chunks and tree-shaking eliminates unused chain implementations (~2MB saved).
-
-**Why this demo keeps manualChunks:** For educational purposes, we intentionally keep the bloated configuration to demonstrate this issue. Production apps should remove the SDK from `manualChunks`.
+**Why this demo keeps manualChunks:** For educational purposes, we intentionally keep the configuration to demonstrate this issue. Production apps should remove the SDK from `manualChunks`.
 
 **Related:** [GitHub Issue #131](https://github.com/smartcontractkit/ccip-javascript-sdk/issues/131)
 
 ### Summary Table
 
-| Issue                               | Severity | Mitigation                     | Fixed in Next SDK    |
-| ----------------------------------- | -------- | ------------------------------ | -------------------- |
-| #1 `getMessageById` return type     | High     | Type helper                    | ✅ Yes               |
-| #2 Viem adapter + wagmi types       | Medium   | Type cast                      | -                    |
-| #3a `getTokenPoolConfigs` unclear   | Medium   | Explicit annotation            | ✅ Yes               |
-| #3b `getTokenPoolRemotes` unclear   | Low      | Safe extraction                | ✅ Yes               |
-| #3c `RateLimiterState` nullability  | Low      | Null check helper              | ✅ Yes               |
-| #4 `setTimeout().unref()` error     | Medium   | Browser polyfill               | ✅ Yes               |
-| #5 Bundle bloat with `manualChunks` | Medium   | Remove SDK from `manualChunks` | N/A (bundler config) |
+| Issue                               | Severity | Status in v0.96.0      | Action                     |
+| ----------------------------------- | -------- | ---------------------- | -------------------------- |
+| #1 `getMessageById` return type     | High     | ✅ Fixed               | Use `metadata` field       |
+| #2 Viem adapter + wagmi types       | Medium   | ❌ Still needed        | Keep type cast             |
+| #3a `getTokenPoolConfig` types      | Medium   | ✅ Fixed               | Method renamed to singular |
+| #3b `getTokenPoolRemotes` types     | Low      | ✅ Fixed               | Types now clear            |
+| #3c `RateLimiterState` nullability  | Low      | ✅ Fixed               | Explicit `\| null` type    |
+| #4 `setTimeout().unref()` error     | Medium   | ✅ Fixed               | Polyfill removed           |
+| #5 Bundle bloat with `manualChunks` | Medium   | Improved (68% smaller) | Remove SDK from chunks     |
 
 ## Resources
 

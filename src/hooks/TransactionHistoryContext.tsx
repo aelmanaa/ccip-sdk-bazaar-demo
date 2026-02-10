@@ -8,29 +8,12 @@
  *
  * CCIP SDK INTEGRATION: Uses chain.getMessageById() to poll status
  * of pending transactions in the background.
+ *
+ * SDK v0.96.0: Status fields are now available via message.metadata property.
  */
 
 import { useCallback, useEffect, useState, useRef, type ReactNode } from 'react'
 import { MessageStatus } from '@chainlink/ccip-sdk'
-
-/**
- * SDK WORKAROUND (Issue #1) - Will be fixed in next SDK version
- *
- * getMessageById() returns CCIPRequest but actual response includes API-specific
- * fields (status, receiptTransactionHash). Until fixed, we extend with the fields we need.
- */
-type MessageStatusFields = {
-  status: (typeof MessageStatus)[keyof typeof MessageStatus]
-  receiptTransactionHash?: string
-}
-
-/**
- * Helper to type the getMessageById response with status fields.
- * The SDK returns these fields but CCIPRequest type doesn't include them.
- */
-function withStatusFields<T>(response: T): T & MessageStatusFields {
-  return response as T & MessageStatusFields
-}
 import { useChains } from './useChains'
 import {
   TransactionHistoryContext,
@@ -80,19 +63,20 @@ export function TransactionHistoryProvider({ children }: { children: ReactNode }
         const chain = getChain(tx.sourceNetwork)
         if (!chain) continue
 
-        // TODO: SDK to fix - getMessageById returns CCIPRequest but includes status fields
-        const message = await chain.getMessageById(tx.messageId).then(withStatusFields)
+        // SDK v0.96.0: Status fields available via metadata property
+        const message = await chain.getMessageById(tx.messageId)
+        const status = message.metadata?.status
 
         // Map SDK status to our status
         let newStatus: TxStatus = 'pending'
         let destTxHash: string | undefined
 
-        if (message.status === MessageStatus.Success) {
+        if (status === MessageStatus.Success) {
           newStatus = 'success'
-          destTxHash = message.receiptTransactionHash
-        } else if (message.status === MessageStatus.Failed) {
+          destTxHash = message.metadata?.receiptTransactionHash
+        } else if (status === MessageStatus.Failed) {
           newStatus = 'failed'
-          destTxHash = message.receiptTransactionHash
+          destTxHash = message.metadata?.receiptTransactionHash
         }
 
         // Update if status changed

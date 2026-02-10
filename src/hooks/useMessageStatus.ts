@@ -35,24 +35,6 @@ import { useChains } from './useChains'
 import { TIMEOUT_DEFAULTS, formatElapsedTime, DEFAULT_POLLING_CONFIG } from '../utils/timeout'
 
 /**
- * SDK WORKAROUND (Issue #1) - Will be fixed in next SDK version
- *
- * getMessageById() returns CCIPRequest but actual response includes API-specific
- * fields (status, receiptTransactionHash). Until fixed, we extend with the fields we need.
- */
-type MessageStatusFields = {
-  status: (typeof MessageStatus)[keyof typeof MessageStatus]
-  receiptTransactionHash?: string
-}
-
-/**
- * Helper to type the getMessageById response with status fields.
- */
-function withStatusFields<T>(response: T): T & MessageStatusFields {
-  return response as T & MessageStatusFields
-}
-
-/**
  * Detailed CCIP message status stages
  */
 export type DetailedMessageStatus =
@@ -279,17 +261,24 @@ export function useMessageStatus(
        *
        * Fetches the current status of a CCIP message.
        * The SDK internally handles transient errors with retry logic.
+       *
+       * SDK v0.96.0: Status fields are now in the `metadata` property:
+       * - metadata.status: Message lifecycle status
+       * - metadata.receiptTransactionHash: Destination tx hash (if executed)
        */
-      const message = await chain.getMessageById(messageId).then(withStatusFields)
+      const message = await chain.getMessageById(messageId)
 
       // Increment poll count for backoff calculation
       pollCountRef.current++
 
+      // Access status via metadata field (SDK v0.96.0+)
+      const status = message.metadata?.status ?? MessageStatus.Unknown
+
       return {
-        detailedStatus: mapToDetailedStatus(message.status),
+        detailedStatus: mapToDetailedStatus(status),
         sourceTxHash: message.log?.transactionHash ?? null,
-        destTxHash: message.receiptTransactionHash ?? null,
-        rawStatus: message.status,
+        destTxHash: message.metadata?.receiptTransactionHash ?? null,
+        rawStatus: status,
       }
     },
 

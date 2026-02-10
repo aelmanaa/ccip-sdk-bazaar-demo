@@ -30,7 +30,7 @@
     ]
   },
   "dependencies": {
-    "@chainlink/ccip-sdk": "^0.95.0",
+    "@chainlink/ccip-sdk": "0.96.0",
     "@rainbow-me/rainbowkit": "^2.2.10",
     "@solana/wallet-adapter-base": "^0.9.23",
     "@solana/wallet-adapter-react": "^0.15.35",

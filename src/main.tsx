@@ -18,33 +18,6 @@ if (typeof globalThis !== 'undefined' && typeof globalThis.fetch === 'function')
     originalFetch.call(globalThis, input, init)
 }
 
-/**
- * SDK WORKAROUND (Issue #4) - Will be fixed in next SDK version
- *
- * Polyfill for setTimeout().unref()
- *
- * The CCIP SDK's retry logic uses setTimeout(...).unref() which is a Node.js API.
- * In browsers, setTimeout returns a number (timer ID), not an object with .unref().
- * This polyfill wraps setTimeout to return an object with a no-op .unref() method.
- */
-if (typeof window !== 'undefined') {
-  const originalSetTimeout = window.setTimeout
-  // @ts-expect-error - Overriding setTimeout signature for polyfill
-  window.setTimeout = function (
-    callback: TimerHandler,
-    delay?: number,
-    ...args: unknown[]
-  ): ReturnType<typeof originalSetTimeout> & { unref: () => void } {
-    const id = originalSetTimeout(callback, delay, ...args)
-    // Return an object that wraps the timer ID and adds a no-op unref
-    return Object.assign(id as unknown as object, {
-      unref: () => {
-        /* no-op in browser */
-      },
-    }) as ReturnType<typeof originalSetTimeout> & { unref: () => void }
-  }
-}
-
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { App } from './App'

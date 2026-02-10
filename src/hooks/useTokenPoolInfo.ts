@@ -7,7 +7,7 @@
  * SDK Functions used:
  * - chain.getTokenAdminRegistryFor(router) → registry address
  * - chain.getRegistryTokenConfig(registry, token) → { tokenPool }
- * - chain.getTokenPoolConfigs(pool) → { token, router, typeAndVersion }
+ * - chain.getTokenPoolConfig(pool) → { token, router, typeAndVersion }
  * - chain.getTokenPoolRemotes(pool, destSelector) → Record<string, TokenPoolRemote>
  *
  * Educational Note: This demonstrates the full flow of querying CCIP
@@ -15,6 +15,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react'
+import { EVMChain, SolanaChain } from '@chainlink/ccip-sdk'
 import type { RateLimiterState, TokenPoolRemote } from '@chainlink/ccip-sdk'
 import { useChains } from './useChains'
 import { NETWORKS, getRouterAddress } from '../config'
@@ -22,11 +23,9 @@ import { TIMEOUT_DEFAULTS, withTimeout } from '../utils/timeout'
 import { categorizeError, type CategorizedError } from '../utils/errors'
 
 /**
- * SDK WORKAROUND (Issue #3c) - Will be fixed in next SDK version
- *
  * Rate limit bucket configuration for display.
- * Extends SDK's RateLimiterState with isEnabled flag because RateLimiterState
- * nullability is not always clear from the SDK types.
+ * Extends SDK's RateLimiterState with isEnabled flag for UI convenience.
+ * Note: SDK v0.96.0 now properly types RateLimiterState as `{ ... } | null`.
  */
 export interface RateLimitBucket {
   /** Current tokens available in bucket */
@@ -41,7 +40,7 @@ export interface RateLimitBucket {
 
 /**
  * Convert SDK's RateLimiterState to our RateLimitBucket.
- * Handles null/undefined state explicitly (SDK Issue #3c - will be fixed in next version).
+ * Handles null state (rate limiting disabled) vs defined state (rate limiting enabled).
  */
 function toRateLimitBucket(state: RateLimiterState): RateLimitBucket | null {
   if (!state) return null
@@ -188,28 +187,45 @@ export function useTokenPoolInfo(
       /**
        * Step 3: Get pool configuration
        *
-       * CCIP SDK: chain.getTokenPoolConfigs(pool)
+       * CCIP SDK: chain.getTokenPoolConfig(pool)
        * Returns general pool config including type and version.
+       * Note: Method renamed from getTokenPoolConfigs to getTokenPoolConfig in SDK v0.96.0.
        *
-       * SDK WORKAROUND (Issue #3a) - Will be fixed in next SDK version
-       * Return type is unclear, so we explicitly annotate it here.
-       * Different chain families may return slightly different shapes,
-       * but all include token, router, and optionally typeAndVersion.
+       * Best Practice: Use instanceof narrowing to get full type safety.
+       * Each chain type returns slightly different structures:
+       * - EVMChain: { token, router, typeAndVersion: string }
+       * - SolanaChain: { token, router, tokenPoolProgram, typeAndVersion?: string }
+       *
+       * By narrowing first, TypeScript knows the exact return type.
        */
-      const poolConfigPromise: Promise<{ token: string; router: string; typeAndVersion?: string }> =
-        sourceChain.getTokenPoolConfigs(poolAddress)
-      const poolConfigResult = await withTimeout(
-        poolConfigPromise,
-        TIMEOUT_DEFAULTS.POOL_INFO,
-        'Pool configuration lookup'
-      )
+      let typeAndVersion: string = 'Unknown'
 
-      if (poolConfigResult.timedOut || poolConfigResult.error || !poolConfigResult.data) {
-        throw poolConfigResult.error || new Error('Failed to get pool configuration')
+      if (sourceChain instanceof SolanaChain) {
+        // Solana-specific: has tokenPoolProgram, typeAndVersion is optional
+        const result = await withTimeout(
+          sourceChain.getTokenPoolConfig(poolAddress),
+          TIMEOUT_DEFAULTS.POOL_INFO,
+          'Solana pool configuration lookup'
+        )
+        if (result.timedOut || result.error || !result.data) {
+          throw result.error || new Error('Failed to get pool configuration')
+        }
+        typeAndVersion = result.data.typeAndVersion ?? 'Unknown'
+        // Could also access: result.data.tokenPoolProgram (Solana-specific)
+      } else if (sourceChain instanceof EVMChain) {
+        // EVM-specific: typeAndVersion is guaranteed
+        const result = await withTimeout(
+          sourceChain.getTokenPoolConfig(poolAddress),
+          TIMEOUT_DEFAULTS.POOL_INFO,
+          'EVM pool configuration lookup'
+        )
+        if (result.timedOut || result.error || !result.data) {
+          throw result.error || new Error('Failed to get pool configuration')
+        }
+        typeAndVersion = result.data.typeAndVersion // Guaranteed string on EVM
+      } else {
+        throw new Error('Unsupported chain type')
       }
-
-      const poolConfig = poolConfigResult.data
-      const typeAndVersion = poolConfig.typeAndVersion ?? 'Unknown'
 
       /**
        * Step 4: Get remote chain configuration
