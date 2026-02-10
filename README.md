@@ -292,32 +292,31 @@ const status = await chain.getMessageById(messageId)
 
 ### 8. Message Lifecycle
 
-The SDK provides a `MessageStatus` enum for tracking message state:
+The `MessageStatus` enum represents the current state of a cross-chain message:
 
 ```typescript
 import { MessageStatus } from '@chainlink/ccip-sdk'
 
-// Full lifecycle stages
-MessageStatus.Unknown // Initial/unknown state
-MessageStatus.Sent // Transaction submitted on source chain
-MessageStatus.SourceFinalized // Source chain reached finality
-MessageStatus.Committed // DON committed merkle root to destination
-MessageStatus.Blessed // Risk Management Network approved the message
-MessageStatus.Verifying // Verifying message on destination chain
-MessageStatus.Verified // Message verified, ready for execution
-MessageStatus.Success // Transfer completed successfully
-MessageStatus.Failed // Execution failed (can be retried)
-
-// Compare status
+// Check message status
 const message = await chain.getMessageById(messageId)
-const status = message.metadata?.status
-
-if (status === MessageStatus.Success) {
+if (message.metadata?.status === MessageStatus.Success) {
   console.log('Transfer complete!')
-} else if (status === MessageStatus.Failed) {
-  console.log('Transfer failed, may need manual retry')
 }
 ```
+
+| Status            | Description                                        |
+| ----------------- | -------------------------------------------------- |
+| `Sent`            | Message sent on source chain, pending finalization |
+| `SourceFinalized` | Source chain transaction finalized                 |
+| `Committed`       | Commit report accepted on destination chain        |
+| `Blessed`         | Commit blessed by Risk Management Network          |
+| `Verifying`       | Message is being verified by the CCIP network      |
+| `Verified`        | Message has been verified by the CCIP network      |
+| `Success`         | Message executed successfully on destination       |
+| `Failed`          | Message execution failed on destination            |
+| `Unknown`         | API returned an unrecognized status (see below)    |
+
+> **Note on `Unknown` status:** If you encounter `MessageStatus.Unknown`, it means the CCIP API returned a status value that your SDK version doesn't recognize. This typically happens when new status values are added to the API. Update to the latest SDK version to handle new status values properly.
 
 > See `src/hooks/useMessageStatus.ts` for the complete polling implementation with React Query.
 
