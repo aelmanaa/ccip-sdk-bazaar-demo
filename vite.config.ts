@@ -2,7 +2,7 @@
  * Vite Configuration for CCIP SDK Demo
  *
  * Key configurations:
- * 1. Node polyfills - Required for Solana and crypto libraries in browser
+ * 1. Node polyfills - See detailed breakdown below
  * 2. Codespaces compatibility - Host binding and HMR settings
  * 3. Chunk splitting - Optimized loading for wallet and SDK libraries
  */
@@ -14,17 +14,33 @@ export default defineConfig({
   plugins: [
     react(),
     /**
-     * CRITICAL: Node.js polyfills for browser compatibility
+     * Node.js Polyfills for Browser Compatibility
      *
-     * The CCIP SDK and wallet libraries use Node.js built-ins that don't exist
-     * in browsers. This plugin provides browser-compatible implementations.
+     * IMPORTANT: Different libraries require different polyfills.
+     * This demo uses both CCIP SDK and wallet libraries, each with distinct needs.
      *
-     * Required for:
-     * - @solana/web3.js (Buffer, crypto)
-     * - @chainlink/ccip-sdk (stream, util)
-     * - Various crypto operations
+     * ┌─────────────────────────────────────────────────────────────────────────┐
+     * │ Polyfill │ Required By                  │ NOT Required By              │
+     * ├─────────────────────────────────────────────────────────────────────────┤
+     * │ buffer   │ @chainlink/ccip-sdk          │                              │
+     * │          │ (Solana, TON, Sui chains)    │                              │
+     * ├─────────────────────────────────────────────────────────────────────────┤
+     * │ crypto   │ @metamask/sdk (uuid)         │ @chainlink/ccip-sdk          │
+     * │ stream   │ @metamask/sdk (is-stream)    │ @chainlink/ccip-sdk          │
+     * │ process  │ @metamask/sdk, @walletconnect│ @chainlink/ccip-sdk          │
+     * │ util     │ @solana/wallet-adapter       │ @chainlink/ccip-sdk          │
+     * └─────────────────────────────────────────────────────────────────────────┘
+     *
+     * If you're ONLY using @chainlink/ccip-sdk (no wallet UI):
+     *   include: ['buffer']
+     *   globals: { Buffer: true }
+     *
+     * This demo includes wallet libraries (RainbowKit, Solana Wallet Adapter),
+     * so we need the full set of polyfills below.
      */
     nodePolyfills({
+      // 'buffer' = CCIP SDK requirement (for Solana/TON/Sui chains)
+      // 'crypto', 'stream', 'util', 'process' = Wallet library requirements (NOT SDK)
       include: ['buffer', 'crypto', 'stream', 'util', 'process'],
       globals: {
         Buffer: true,

@@ -808,6 +808,50 @@ The 1.0 MB is the legitimate size for EVM + Solana chain implementations used by
 | #4 `setTimeout().unref()` error    | Medium   | ✅ Fixed          | Polyfill removed           |
 | #5 Tree-shaking not working        | Medium   | ✅ Fixed          | Only used chains bundled   |
 
+## Bundler Configuration & Polyfills
+
+This demo uses Vite with several Node.js polyfills. **It's important to understand which polyfills are required by the CCIP SDK vs. other libraries.**
+
+### Polyfill Requirements Breakdown
+
+| Polyfill  | Required By                                       | NOT Required By     |
+| --------- | ------------------------------------------------- | ------------------- |
+| `buffer`  | **@chainlink/ccip-sdk** (Solana, TON, Sui chains) | -                   |
+| `crypto`  | @metamask/sdk, wallet libraries                   | @chainlink/ccip-sdk |
+| `stream`  | @metamask/sdk                                     | @chainlink/ccip-sdk |
+| `process` | @metamask/sdk, @walletconnect                     | @chainlink/ccip-sdk |
+| `util`    | @solana/wallet-adapter                            | @chainlink/ccip-sdk |
+
+### If You're Only Using the CCIP SDK
+
+If your project uses `@chainlink/ccip-sdk` **without** wallet UI libraries (RainbowKit, MetaMask SDK, Solana Wallet Adapter), you only need the `buffer` polyfill:
+
+```ts
+// vite.config.ts - Minimal config for CCIP SDK only
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
+
+export default defineConfig({
+  plugins: [
+    nodePolyfills({
+      include: ['buffer'],
+      globals: { Buffer: true },
+    }),
+  ],
+})
+```
+
+See the [official SDK documentation](https://www.npmjs.com/package/@chainlink/ccip-sdk) for complete bundler configurations (Vite, Webpack, esbuild, Rollup, Parcel, Bun).
+
+### Why This Demo Has More Polyfills
+
+This demo includes wallet connection UI libraries that have their own Node.js dependencies:
+
+- **RainbowKit** → uses MetaMask SDK → requires `crypto`, `stream`, `process`
+- **Solana Wallet Adapter** → requires `util`
+- **WalletConnect** → requires `process`
+
+These are **wallet library requirements, not CCIP SDK requirements**.
+
 ## Resources
 
 - [CCIP Documentation](https://docs.chain.link/ccip)
